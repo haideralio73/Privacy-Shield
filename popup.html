@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Shield</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      width: 400px; min-height: 300px;
+      background: #121220; color: #e0e0e0; overflow-x: hidden;
+    }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #1a1a2e; }
+    ::-webkit-scrollbar-thumb { background: #0f3460; border-radius: 3px; }
+
+    .header {
+      background: linear-gradient(135deg, #16213e, #1a1a2e);
+      padding: 12px 16px; display: flex; align-items: center;
+      justify-content: space-between; border-bottom: 1px solid #0f3460;
+    }
+    .header h1 { font-size: 14px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .header h1 .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+    .dot.safe { background: #4caf50; box-shadow: 0 0 6px #4caf50; }
+    .dot.danger { background: #f44336; box-shadow: 0 0 6px #f44336; }
+
+    .badge-ring {
+      background: #1e1e3a; border-radius: 20px; padding: 3px 10px 3px 8px;
+      display: flex; align-items: center; gap: 5px; cursor: pointer;
+    }
+    .badge-ring .num { font-size: 15px; font-weight: 700; color: #ff5252; }
+    .badge-ring .lbl { font-size: 9px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .domain-bar {
+      padding: 7px 16px; background: #0f3460; font-size: 12px; color: #90caf9;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .domain-bar .dom { font-weight: 600; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .domain-bar .wl-btn {
+      background: rgba(255,255,255,0.08); border: none; color: #90caf9; font-size: 10px;
+      padding: 2px 8px; border-radius: 3px; cursor: pointer;
+    }
+    .domain-bar .wl-btn:hover { background: rgba(255,255,255,0.15); }
+    .domain-bar .wl-btn.on { background: #1b5e20; color: #a5d6a7; }
+
+    .block-section { padding: 8px 16px; background: #1a1a2e; border-bottom: 1px solid #0f3460; }
+
+    .master-row {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
+    }
+    .master-row label { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
+    .master-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: #E53935; cursor: pointer; }
+    .master-row .status { font-size: 11px; padding: 1px 6px; border-radius: 3px; font-weight: 600; }
+    .status.on { background: #1b5e20; color: #a5d6a7; }
+    .status.off { background: #37474f; color: #b0bec5; }
+
+    .cat-rows { display: flex; gap: 6px; flex-wrap: wrap; }
+    .cat-row {
+      display: flex; align-items: center; gap: 4px; font-size: 11px; cursor: pointer;
+      padding: 2px 8px 2px 4px; border-radius: 4px; background: rgba(15,52,96,0.3);
+    }
+    .cat-row input { width: 12px; height: 12px; accent-color: #E53935; cursor: pointer; }
+    .cat-row .dot-cat { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+
+    .stats-row {
+      display: flex; gap: 0; padding: 5px 16px; background: #16162a;
+      border-bottom: 1px solid #0f3460;
+    }
+    .stat-cell { flex: 1; text-align: center; padding: 4px 0; }
+    .stat-cell .val { font-size: 14px; font-weight: 700; }
+    .stat-cell .lbl { font-size: 8px; text-transform: uppercase; color: #888; letter-spacing: 0.5px; margin-top: 1px; }
+    .stat-cell .val.analytics { color: #66bb6a; }
+    .stat-cell .val.ads { color: #ef5350; }
+    .stat-cell .val.fingerprint { color: #ab47bc; }
+    .stat-cell .val.total { color: #ffa726; }
+
+    .section-title {
+      padding: 7px 16px 3px; font-size: 9px; text-transform: uppercase;
+      color: #777; letter-spacing: 1px; font-weight: 700;
+    }
+    .tracker-list { max-height: 200px; overflow-y: auto; }
+    .tracker-item {
+      padding: 5px 16px; display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid rgba(15,52,96,0.3); font-size: 12px;
+      transition: background 0.15s; cursor: pointer;
+    }
+    .tracker-item:hover { background: rgba(15,52,96,0.2); }
+    .tracker-item .dom { flex: 1; word-break: break-all; }
+    .tracker-item .tag {
+      font-size: 8px; padding: 1px 5px; border-radius: 3px;
+      text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; white-space: nowrap;
+    }
+    .tag.analytics { background: #1b5e20; color: #a5d6a7; }
+    .tag.ads { background: #b71c1c; color: #ef9a9a; }
+    .tag.fingerprint { background: #4a148c; color: #ce93d8; }
+    .tag.unknown { background: #37474f; color: #b0bec5; }
+
+    .tracker-detail {
+      padding: 4px 16px 8px 40px; font-size: 10px; color: #666;
+      word-break: break-all; display: none;
+    }
+    .tracker-detail.open { display: block; }
+
+    .empty {
+      padding: 28px 16px; text-align: center; color: #555;
+    }
+    .empty .ic { margin-bottom: 6px; display: flex; justify-content: center; }
+    .empty p { font-size: 13px; }
+    .empty .sub { font-size: 11px; color: #444; margin-top: 2px; }
+
+    .footer {
+      padding: 6px 16px; text-align: center; font-size: 10px; color: #444;
+      border-top: 1px solid #0f3460; display: flex; justify-content: space-between;
+    }
+    .footer a { color: #90caf9; text-decoration: none; font-size: 10px; }
+    .footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><span class="dot" id="dot"></span>Privacy Shield</h1>
+    <div class="badge-ring" id="openOptions" title="Open options">
+      <span class="num" id="badgeNum">0</span>
+      <span class="lbl">trackers</span>
+    </div>
+  </div>
+
+  <div class="domain-bar">
+    <span class="dom" id="domainName">---</span>
+    <button class="wl-btn" id="whitelistBtn">Whitelist</button>
+  </div>
+
+  <div class="block-section">
+    <div class="master-row">
+      <label><input type="checkbox" id="blockToggle"><span>Block trackers</span></label>
+      <span class="status off" id="blockStatus">off</span>
+    </div>
+    <div class="cat-rows" id="catToggles">
+      <label class="cat-row"><input type="checkbox" data-cat="analytics"><span class="dot-cat" style="background:#66bb6a;"></span>Analytics</label>
+      <label class="cat-row"><input type="checkbox" data-cat="ads"><span class="dot-cat" style="background:#ef5350;"></span>Ads</label>
+      <label class="cat-row"><input type="checkbox" data-cat="fingerprint"><span class="dot-cat" style="background:#ab47bc;"></span>Fingerprint</label>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-cell"><div class="val analytics" id="statAnalytics">0</div><div class="lbl">Analytics</div></div>
+    <div class="stat-cell"><div class="val ads" id="statAds">0</div><div class="lbl">Ads</div></div>
+    <div class="stat-cell"><div class="val fingerprint" id="statFingerprint">0</div><div class="lbl">Fingerprint</div></div>
+    <div class="stat-cell"><div class="val total" id="statTotal">0</div><div class="lbl">Total</div></div>
+  </div>
+
+  <div class="section-title">Detected Trackers</div>
+  <div class="tracker-list" id="trackerList">
+    <div class="empty">
+      <div class="ic"></div>
+      <p>No trackers detected</p>
+      <div class="sub">This page looks clean</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span id="sessionBlocked">0 blocked</span>
+    <a href="#" id="optionsLink">Options</a>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

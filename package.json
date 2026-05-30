@@ -1,0 +1,13 @@
+{
+  "name": "privacy-shield",
+  "version": "1.0.0",
+  "description": "Chrome Extension — detect and block 500+ trackers",
+  "private": true,
+  "scripts": {
+    "build:icons": "node scripts/build-icons.mjs",
+    "build": "node scripts/build-icons.mjs"
+  },
+  "devDependencies": {
+    "sharp": "^0.33.0"
+  }
+}
