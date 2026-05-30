@@ -35,14 +35,6 @@
 2. Enable **Developer mode**
 3. Click **Load unpacked** and select the folder
 
-### 3. Publish to Chrome Web Store
-
-1. Zip the extension files (see [Files to upload](#files-to-upload) below)
-2. Go to the [Chrome Web Store Developer Dashboard](https://chrome.google.com/webstore/devconsole)
-3. Pay the one-time $5 developer registration fee
-4. Click **New item** and upload the ZIP
-5. Fill in the store listing (description, screenshots, icon)
-6. Submit for review
 
 ---
 
@@ -70,33 +62,6 @@ Open Options from the popup (click the badge count or the "Options" link at the 
 - **Statistics** — View today's blocked count, all-time total, per-category breakdown, and unique domains
 - **Export / Import** — Download your settings as JSON or restore from a file
 - **Danger Zone** — Reset all settings to defaults
-
----
-
-## Files to Upload
-
-For GitHub drag-and-drop or ZIP packaging, include **all** of these files at the root level:
-
-```
-Privacy Shield /
-  manifest.json          # Extension manifest (Manifest V3)
-  background.js          # Service worker — network interception, blocking, stats
-  content.js             # DOM scanner — inline/external scripts, pixels, MutationObserver
-  popup.html             # Popup interface
-  popup.js               # Popup logic — port communication, toggles, whitelist
-  options.html           # Options page
-  options.js             # Options logic — defaults, whitelist, stats, export/import
-  trackers.json          # Blocklist — 1,300+ tracker domains
-  icon.svg               # SVG source icon
-  icon16.png             # 16px toolbar icon
-  icon48.png             # 48px extensions page icon
-  icon128.png            # 128px store listing icon
-  package.json           # (optional) Build dependencies
-  scripts/
-    build-icons.mjs      # (optional) SVG → PNG build script
-```
-
-**Minimum required for Chrome:** manifest.json, background.js, content.js, popup.html, popup.js, options.html, options.js, trackers.json, icon16.png, icon48.png, icon128.png
 
 ---
 
@@ -162,15 +127,6 @@ npm run build:icons
 
 This uses the `sharp` library to convert `icon.svg` into `icon16.png`, `icon48.png`, and `icon128.png`.
 
-### Submit to Chrome Web Store
-
-1. Increment `"version"` in `manifest.json`
-2. Run `npm run build:icons` to refresh icons if needed
-3. ZIP all required files
-4. Upload to the [Chrome Web Store Dashboard](https://chrome.google.com/webstore/devconsole)
 
 ---
 
-## License
-
-MIT
